@@ -8,6 +8,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.shkhan.iqra.ui.model.HeroPhase
 import com.shkhan.iqra.ui.viewmodel.PrayerViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -15,6 +16,8 @@ import com.shkhan.iqra.ui.viewmodel.PrayerViewModel
 fun DashboardScreen(
     prayerViewModel: PrayerViewModel
 ) {
+
+
 
     // ===============================
     // Collect ViewModel State
@@ -49,8 +52,16 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 // 🔹 Hero Card
-                heroState?.let {
-                    HeroCard(it)
+                heroState?.let { state ->
+                    HeroCard(
+                        state = state,
+                        onStopClick = { phase: HeroPhase ->
+                            prayerViewModel.stopAlarm(phase)
+                        },
+                        onDoneClick = { phase: HeroPhase ->
+                            prayerViewModel.confirmDone(phase)
+                        }
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
@@ -92,3 +103,5 @@ fun DashboardScreen(
         }
     }
 }
+
+

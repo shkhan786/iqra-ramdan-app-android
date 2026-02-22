@@ -4,12 +4,9 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.shkhan.iqra.engine.HeroPhaseEngine
-import com.shkhan.iqra.ui.model.UserPhaseFlags
+import com.shkhan.iqra.ui.alarm.AlarmPlayer
 import com.shkhan.iqra.ui.model.*
-import com.shkhan.iqra.ui.repository.DuaRepository
-import com.shkhan.iqra.ui.repository.PrayerRepository
-import com.shkhan.iqra.ui.repository.QuoteRepository
-import com.shkhan.iqra.ui.repository.TimingsData
+import com.shkhan.iqra.ui.repository.*
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
@@ -19,11 +16,21 @@ import java.util.*
 class PrayerViewModel(application: Application) : AndroidViewModel(application) {
 
     private val repository = PrayerRepository()
-
     private val duaRepository = DuaRepository(application.applicationContext)
     private val quoteRepository = QuoteRepository(application.applicationContext)
     private val phaseEngine = HeroPhaseEngine()
     private val userFlags = UserPhaseFlags()
+    // ===============================
+    // Alarm + Confirmation Flags
+    // ===============================
+    private var sehriAlarmHandled = false
+    private var iftarAlarmHandled = false
+
+    private var sehriConfirmed = false
+    private var iftarConfirmed = false
+
+
+
 
     // ===============================
     // Prayer Timings
@@ -40,12 +47,20 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     private val _currentTime = MutableStateFlow(System.currentTimeMillis())
 
     // ===============================
-    // Fasting Status Section
+    // Alarm State
+    // ===============================
+    private val _alarmActive = MutableStateFlow(false)
+    val alarmActive: StateFlow<Boolean> = _alarmActive
+
+    private var lastAlarmPhase: HeroPhase? = null
+
+    // ===============================
+    // Fasting Status
     // ===============================
     private val _fastingStatus = MutableStateFlow(FastingStatus.FASTING)
     val fastingStatus: StateFlow<FastingStatus> = _fastingStatus
 
-    private val _completedDays = MutableStateFlow(4) // Demo value
+    private val _completedDays = MutableStateFlow(4)
     val completedDays: StateFlow<Int> = _completedDays
 
     val totalDays = 30
@@ -70,7 +85,7 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     // ===============================
-    // Message State (Stable 1 Min)
+    // Message Engine
     // ===============================
     private val _displayMessage = MutableStateFlow("")
     private val _messageType = MutableStateFlow(MessageType.CONTEXT)
@@ -97,11 +112,14 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
                 fajrTime = sehriMillis,
                 dhuhrTime = dhuhrMillis,
                 asrTime = asrMillis,
-                maghribTime = maghribMillis,
+                maghribTime = maghribMillis
             )
 
-            val (contextText, type) = resolveMessage(phase, now)
+//            val phase = HeroPhase.IFTAR_ALARM
 
+            handleAlarmState(phase)
+
+            val (contextText, type) = resolveMessage(phase, now)
             updateMessageIfNeeded(type, contextText, now)
 
             buildHeroState(
@@ -146,6 +164,47 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
     }
 
     // ===============================
+    // Alarm Logic
+    // ===============================
+    private fun handleAlarmState(phase: HeroPhase) {
+
+        val isSehriAlarm = phase == HeroPhase.SEHRI_ALARM
+        val isIftarAlarm = phase == HeroPhase.IFTAR_ALARM
+
+        // 🔔 START ALARM ONLY IF NOT HANDLED
+        if (isSehriAlarm && !sehriAlarmHandled && !_alarmActive.value) {
+            _alarmActive.value = true
+            AlarmPlayer.play(getApplication())
+        }
+
+        if (isIftarAlarm && !iftarAlarmHandled && !_alarmActive.value) {
+            _alarmActive.value = true
+            AlarmPlayer.play(getApplication())
+        }
+
+        // 🧹 Reset flags when leaving phase
+        if (!isSehriAlarm) {
+            sehriAlarmHandled = false
+        }
+
+        if (!isIftarAlarm) {
+            iftarAlarmHandled = false
+        }
+    }
+
+    fun stopAlarm(currentPhase: HeroPhase) {
+
+        AlarmPlayer.stop()
+        _alarmActive.value = false
+
+        when (currentPhase) {
+            HeroPhase.SEHRI_ALARM -> sehriAlarmHandled = true
+            HeroPhase.IFTAR_ALARM -> iftarAlarmHandled = true
+            else -> {}
+        }
+    }
+
+    // ===============================
     // Message Resolver
     // ===============================
     private fun resolveMessage(
@@ -163,10 +222,8 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
                 Pair("Prepare for dua before breaking your fast.", MessageType.IFTAR_DUA)
 
             HeroPhase.FASTING_DAY -> {
-
                 val minute = now / (1000 * 60)
-
-                if ((minute % 2).toInt() == 0)
+                if (minute % 2 == 0L)
                     Pair("Stay patient and focused during your fast.", MessageType.CONTEXT)
                 else
                     Pair("", MessageType.QUOTE)
@@ -216,7 +273,6 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
 
         val currentMessageType = _messageType.value
 
-        // 🔥 Fetch dua ONLY when needed
         val dua = when (currentMessageType) {
             MessageType.SEHRI_DUA -> duaRepository.getSehriDua()
             MessageType.IFTAR_DUA -> duaRepository.getIftarDua()
@@ -241,15 +297,14 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
             secondaryTime = timings.fajr,
             nextPrayerLabel = "Dhuhr",
             nextPrayerTime = timings.dhuhr,
-
-            // 🔥 Message logic
             displayMessage = if (dua == null) _displayMessage.value else "",
-
             messageType = currentMessageType,
-            buttonType = HeroButtonType.NONE,
-            alarmActive = false,
-
-            // 🔥 Dua fields (THIS was missing before)
+            buttonType = when {
+                _alarmActive.value -> HeroButtonType.STOP_ALARM
+                phase == HeroPhase.SEHRI_WINDOW -> HeroButtonType.DONE_SEHRI
+                else -> HeroButtonType.NONE
+            },
+            alarmActive = _alarmActive.value,
             duaTitle = dua?.title,
             duaText = dua?.transliteration,
             duaTranslation = dua?.translation
@@ -271,6 +326,26 @@ class PrayerViewModel(application: Application) : AndroidViewModel(application) 
             calendar.timeInMillis
         } catch (e: Exception) {
             0L
+        }
+    }
+
+    fun confirmDone(currentPhase: HeroPhase) {
+
+        when (currentPhase) {
+
+            HeroPhase.SEHRI_ALARM,
+            HeroPhase.SEHRI_WINDOW -> {
+                sehriConfirmed = true
+                sehriAlarmHandled = true
+            }
+
+            HeroPhase.IFTAR_ALARM -> {
+                iftarConfirmed = true
+                iftarAlarmHandled = true
+                _completedDays.value += 1
+            }
+
+            else -> {}
         }
     }
 }

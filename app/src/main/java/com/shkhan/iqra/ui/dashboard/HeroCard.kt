@@ -21,7 +21,9 @@ import java.util.*
 
 @Composable
 fun HeroCard(
-    state: HeroState
+    state: HeroState,
+    onStopClick: (HeroPhase) -> Unit,
+    onDoneClick: (HeroPhase) -> Unit
 ) {
 
     // =========================
@@ -107,20 +109,35 @@ fun HeroCard(
                 }
 
                 when (state.buttonType) {
-                    HeroButtonType.DONE_SEHRI ->
-                        TextButton(onClick = { }) {
+                    HeroButtonType.DONE_SEHRI -> {
+                        TextButton(
+                            onClick = {
+                                onDoneClick(state.phase)
+                            }
+                        ) {
                             Text("DONE SEHRI")
                         }
+                    }
 
-                    HeroButtonType.DONE_IFTAR ->
-                        TextButton(onClick = { }) {
+                    HeroButtonType.DONE_IFTAR -> {
+                        TextButton(
+                            onClick = {
+                                onDoneClick(state.phase)
+                            }
+                        ) {
                             Text("DONE IFTAR")
                         }
+                    }
 
-                    HeroButtonType.STOP_ALARM ->
-                        TextButton(onClick = { }) {
+                    HeroButtonType.STOP_ALARM -> {
+                        TextButton(
+                            onClick = {
+                                onStopClick(state.phase)
+                            }
+                        ) {
                             Text("STOP 🔔")
                         }
+                    }
 
                     else -> {}
                 }
