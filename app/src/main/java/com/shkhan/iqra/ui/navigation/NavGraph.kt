@@ -6,7 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.*
-import com.shkhan.iqra.ui.DashboardScreen
+import com.shkhan.iqra.ui.dashboard.DashboardScreen
 import com.shkhan.iqra.ui.PrayersScreen
 import com.shkhan.iqra.ui.viewmodel.PrayerViewModel
 

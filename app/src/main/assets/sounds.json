@@ -1,0 +1,38 @@
+[
+  {
+    "soundId": "SEHRI_ALARM",
+    "displayName": "Sehri End Alarm",
+    "fileName": "sehri_alarm",
+    "loop": true,
+    "vibration": true,
+    "vibrationPattern": [0, 500, 300, 500],
+    "autoStopAfterSeconds": 120
+  },
+  {
+    "soundId": "IFTAR_ALARM",
+    "displayName": "Iftar Start Alarm",
+    "fileName": "iftar_alarm",
+    "loop": true,
+    "vibration": true,
+    "vibrationPattern": [0, 700, 300, 700],
+    "autoStopAfterSeconds": 180
+  },
+  {
+    "soundId": "AZAN_FAJR",
+    "displayName": "Fajr Azan",
+    "fileName": "azan_fajr",
+    "loop": false,
+    "vibration": false,
+    "vibrationPattern": [],
+    "autoStopAfterSeconds": 0
+  },
+  {
+    "soundId": "AZAN_MAGHRIB",
+    "displayName": "Maghrib Azan",
+    "fileName": "azan_maghrib",
+    "loop": false,
+    "vibration": false,
+    "vibrationPattern": [],
+    "autoStopAfterSeconds": 0
+  }
+]

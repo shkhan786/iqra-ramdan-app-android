@@ -1,0 +1,17 @@
+package com.shkhan.iqra.ui.model
+
+enum class HeroPhase {
+    NIGHT_PRE_SEHRI,
+    SEHRI_WINDOW,
+    SEHRI_DONE_EARLY,
+    SEHRI_LAST_5_MIN,
+    SEHRI_ALARM,
+    SEHRI_STOPPED,
+    FASTING_DAY,
+    IFTAR_PRE_WINDOW,
+    IFTAR_ALARM,
+    IFTAR_STOPPED,
+    FAST_COMPLETED,
+    AUTO_COMPLETED,
+    NIGHT_AFTER_IFTAR
+}

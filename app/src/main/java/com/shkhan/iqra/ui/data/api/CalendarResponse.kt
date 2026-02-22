@@ -1,4 +1,4 @@
-package com.shkhan.iqra.ui.api
+package com.shkhan.iqra.ui.data.api
 
 data class CalendarResponse(
     val data: List<DayData>

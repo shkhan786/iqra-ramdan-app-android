@@ -1,0 +1,80 @@
+[
+  {
+    "phaseId": "NIGHT_PRE_SEHRI",
+    "title": "Next Sehri in",
+    "icon": "nightlight_round",
+    "context": "Wake up early for Sehri and prayer."
+  },
+  {
+    "phaseId": "SEHRI_WINDOW",
+    "title": "Sehri Time",
+    "icon": "dark_mode",
+    "context": "Make Niyyah and recite Sehri dua."
+  },
+  {
+    "phaseId": "SEHRI_LAST_5_MIN",
+    "title": "Sehri Ending Soon",
+    "icon": "schedule",
+    "context": "Prepare to stop eating now."
+  },
+  {
+    "phaseId": "SEHRI_ALARM",
+    "title": "Sehri Time Over",
+    "icon": "alarm",
+    "context": "Sehri has ended. Prepare for Fajr prayer."
+  },
+  {
+    "phaseId": "FASTING_DAY",
+    "title": "Iftar in",
+    "icon": "wb_sunny",
+    "context": "Stay patient and focused during your fast."
+  },
+  {
+    "phaseId": "IFTAR_PRE_WINDOW",
+    "title": "Iftar Soon",
+    "icon": "wb_twilight",
+    "context": "Prepare for dua before breaking your fast."
+  },
+  {
+    "phaseId": "IFTAR_ALARM",
+    "title": "Iftar Time",
+    "icon": "notifications_active",
+    "context": "Complete Maghrib namaz, make iftar dua and break your fast."
+  },
+  {
+    "phaseId": "FAST_COMPLETED",
+    "title": "Fast Completed",
+    "icon": "verified",
+    "context": "May Allah accept your fast."
+  },
+  {
+    "phaseId": "NIGHT_AFTER_IFTAR",
+    "title": "Next Sehri in",
+    "icon": "bedtime",
+    "context": "Rest well and prepare for tomorrow."
+  },
+  {
+    "phaseId": "SEHRI_DONE_EARLY",
+    "title": "Sehri Completed",
+    "icon": "check_circle",
+    "context": "May Allah accept your intention."
+  },
+  {
+    "phaseId": "SEHRI_STOPPED",
+    "title": "Sehri Time Over",
+    "icon": "alarm_off",
+    "context": "Make Niyyah and recite Sehri dua."
+  },
+  {
+    "phaseId": "IFTAR_STOPPED",
+    "title": "Iftar Time",
+    "icon": "alarm_off",
+    "context": "Complete Maghrib namaz, then make iftar dua."
+  },
+  {
+    "phaseId": "AUTO_COMPLETED",
+    "title": "Fast Completed",
+    "icon": "verified",
+    "context": "Your fast has been marked completed."
+  }
+]

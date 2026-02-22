@@ -1,6 +1,6 @@
 package com.shkhan.iqra.ui.repository
 
-import com.shkhan.iqra.ui.api.ApiClient
+import com.shkhan.iqra.ui.data.api.ApiClient
 import java.time.LocalDate
 
 class PrayerRepository {

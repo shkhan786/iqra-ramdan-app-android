@@ -7,8 +7,3 @@ data class RamadanDay(
     val fajr: String,
     val iftar: String
 )
-
-
-data class Quote(
-    val text: String
-)

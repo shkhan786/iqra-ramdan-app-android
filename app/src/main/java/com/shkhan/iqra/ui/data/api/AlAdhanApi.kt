@@ -1,4 +1,4 @@
-package com.shkhan.iqra.ui.api
+package com.shkhan.iqra.ui.data.api
 
 import retrofit2.http.GET
 import retrofit2.http.Query
